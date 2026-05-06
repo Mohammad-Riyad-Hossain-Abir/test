@@ -1044,25 +1044,23 @@ input[type=file]{color:var(--muted);border:none;background:none;padding:3px 0;}
 // ============================================================
 // 🔥 Google Apps Script Database URL — এখানে আপনার নতুন URL দিন
 // ============================================================
-const GAS_DB_URL = 'https://script.google.com/macros/s/AKfycbx61rR5KMPZjG-5_oMI2g2CPmBopgBy2rym-P1VNxZblrZwlQNfIMQfJOtKsENwrCXGug/exec';
+const GAS_DB_URL = 'https://script.google.com/macros/s/AKfycbyrmQE0ihYOCXoHQst2YvILqLspuT1xkLcL9LvVy0t3DDL-FhWSUVUtHp6bUfUrbfEO3w/exec';
 // ============================================================
 
 // GAS সংযোগ পরীক্ষা করে status indicator দেখাও
 let gasAvailable = false;
-async function checkGASConnection() {
+async function saveToSheet(memberData) {
+  if (!gasAvailable) return;
+
   try {
-    const r = await fetch(GAS_DB_URL + '?action=ping', {method:'GET'});
-    const d = await r.json();
-    gasAvailable = (d.ok || d.pong);
-  } catch(e) { gasAvailable = false; }
-  // Status bar update
-  const bar = document.getElementById('gas-conn-bar');
-  if(bar) {
-    bar.textContent = gasAvailable ? '🟢 Google Sheets সংযুক্ত — ডেটা সব ডিভাইসে সিঙ্ক হচ্ছে' : '🔴 Google Sheets সংযোগ নেই — ডেটা শুধু এই ডিভাইসে সংরক্ষিত';
-    bar.style.background = gasAvailable ? '#1a4a2a' : '#3a1a1a';
-    bar.style.color = gasAvailable ? '#5dde8a' : '#f87171';
-    bar.style.display = 'block';
-    setTimeout(()=>{ if(bar) bar.style.display='none'; }, 5000);
+    const response = await fetch(GAS_DB_URL, {
+      method: 'POST',
+      body: JSON.stringify(memberData)
+    });
+    const result = await response.json();
+    console.log('Saved:', result);
+  } catch (error) {
+    console.error('Error saving to Google Sheets:', error);
   }
 }
 
