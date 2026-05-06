@@ -264,13 +264,13 @@ input[type=file]{color:var(--muted);border:none;background:none;padding:3px 0;}
   <div id="duty-no-wrap" class="hidden" style="display:contents">
     <div class="fgrid" style="display:contents">
   <div>
-    <label class="lbl">আপনার সর্বশেষ দায়িত্বরত শাখা</label>
+    <label class="lbl">আপনার সর্বশেষ দায়িত্বরত শাখা *</label>
     <input id="f-last-branch" type="text" placeholder="শেষ শাখার নাম"/>
   </div>
   <div>
-    <label class="lbl">শাখার স্তর</label>
+    <label class="lbl">শাখার স্তর *</label>
     <select id="f-last-blevel">
-      <option value="">-- শাখার স্তর নির্বাচন করুন --</option>
+      <option value="">-- শাখার স্তর নির্বাচন করুন *--</option>
       <option value="কেন্দ্রীয় পরিষদ">কেন্দ্রীয় পরিষদ</option>
       <option value="জেলা/মহানগর/বিশ্ববিদ্যালয়/মেডিকেল">জেলা/মহানগর/বিশ্ববিদ্যালয়/মেডিকেল</option>
       <option value="উপজেলা/থানা/পৌরসভা/কলেজ/কামিল মাদ্রাসা">উপজেলা/থানা/পৌরসভা/কলেজ/কামিল মাদ্রাসা</option>
@@ -279,15 +279,15 @@ input[type=file]{color:var(--muted);border:none;background:none;padding:3px 0;}
     </select>
   </div>
   <div>
-    <label class="lbl">পদবী</label>
+    <label class="lbl">পদবী *</label>
     <input id="f-last-desig" type="text" placeholder="আগের পদের নাম"/>
   </div>
   <div>
-    <label class="lbl">সেশন</label>
+    <label class="lbl">সেশন *</label>
     <input id="f-last-session" type="text" placeholder="যেমন: ২০২২-২০২৩"/>
   </div>
   <div>
-    <label class="lbl">সভাপতির নাম</label>
+    <label class="lbl">সভাপতির নাম *</label>
     <input id="f-last-pname" type="text" placeholder="আগের সভাপতির নাম"/>
   </div>
   <!-- hidden fields to hold dummy values for validation -->
@@ -322,7 +322,7 @@ input[type=file]{color:var(--muted);border:none;background:none;padding:3px 0;}
         <div class="emsg hidden" id="e-study-inst"></div>
       </div>
       <div>
-        <label class="lbl">অধ্যয়নরত শ্রেণি</label>
+        <label class="lbl">অধ্যয়নরত শ্রেণি *</label>
         <input id="f-study-class" type="text" placeholder="যেমন: ক্লাস ১০, ১ম বর্ষ"/>
       </div>
       <div>
@@ -356,8 +356,9 @@ input[type=file]{color:var(--muted);border:none;background:none;padding:3px 0;}
         <input id="f-edu-result" type="text" placeholder="যেমন: GPA 5.00, CGPA 3.8"/>
       </div>
       <div class="full">
-        <label class="lbl">সর্বশেষ শিক্ষা প্রতিষ্ঠান</label>
+        <label class="lbl">সর্বশেষ শিক্ষা প্রতিষ্ঠান *</label>
         <input id="f-edu-last-inst" type="text" placeholder="প্রতিষ্ঠানের নাম"/>
+        <div class="emsg hidden" id="e-study-inst"></div>
       </div>
     </div>
   </div>
@@ -642,7 +643,7 @@ input[type=file]{color:var(--muted);border:none;background:none;padding:3px 0;}
   <div id="prof-ব্যাংকার-wrap" class="full hidden">
     <div class="fgrid" style="display:contents">
       <div>
-        <label class="lbl">ব্যাংকের ধরন</label>
+        <label class="lbl">ব্যাংকের ধরন *</label>
         <div class="rgrp">
           <label class="rlbl" id="rl-banktype-সরকারি" onclick="selBankType('সরকারি')"><input type="radio" name="banktype" value="সরকারি"/> সরকারি</label>
           <label class="rlbl" id="rl-banktype-বেসরকারি" onclick="selBankType('বেসরকারি')"><input type="radio" name="banktype" value="বেসরকারি"/> বেসরকারি</label>
@@ -1044,7 +1045,7 @@ input[type=file]{color:var(--muted);border:none;background:none;padding:3px 0;}
 // ============================================================
 // 🔥 Google Apps Script Database URL — এখানে আপনার নতুন URL দিন
 // ============================================================
-const GAS_DB_URL = 'https://script.google.com/macros/s/AKfycbxxncu5n6XcWkKpv9TRQ3YLcLssdv5zH4JfXOb_bSiyvFhfdbwKfAKUC4jCw6Mgmv6j/exec ';
+const GAS_DB_URL = 'https://script.google.com/macros/s/AKfycbxxncu5n6XcWkKpv9TRQ3YLcLssdv5zH4JfXOb_bSiyvFhfdbwKfAKUC4jCw6Mgmv6j/exec';
 // ============================================================
 // GAS সংযোগ পরীক্ষা করে status indicator দেখাও
 // ============================================================
@@ -1100,13 +1101,16 @@ function loadFromCache() {
 
 // ========== ২. ডেটা সাবমিট করার ফাংশন ==========
 async function submitData() {
-  const btn = document.querySelector('button[onclick="submitData()"]'); 
-  const originalText = btn ? btn.textContent : "জমা দিন";
+  const btn = document.querySelector('.subbtn'); 
+  const originalText = btn ? btn.textContent : "নিবন্ধন জমা দিন";
   
+  // HTML ইনপুট আইডি অনুযায়ী ডেটা ধরুন
   const payload = {
-    amount: document.getElementById('amount').value,
-    transactionId: document.getElementById('txnId').value,
-    date: document.getElementById('date').value
+    name: document.getElementById('f-name').value, // নাম এবং অন্যান্য তথ্যও যোগ করুন
+    mobile: document.getElementById('f-mobile').value,
+    amount: document.getElementById('f-amount').value,
+    transactionId: document.getElementById('f-txid').value,
+    date: document.getElementById('f-txdate').value
   };
 
   if (btn) { btn.textContent = "⏳ জমা হচ্ছে..."; btn.disabled = true; }
@@ -1114,28 +1118,20 @@ async function submitData() {
   try {
     const response = await fetch(GAS_DB_URL, {
       method: 'POST',
-      body: JSON.stringify(payload),
-      redirect: 'follow'
+      mode: 'no-cors', // এটি গুরুত্বপূর্ণ যদি CORS সমস্যা হয়
+      cache: 'no-cache',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
     });
     
-    const result = await response.json();
-    if(result.result === 'success') {
-       alert('সফলভাবে জমা হয়েছে!');
-       // ইনপুট ফিল্ড ক্লিয়ার করা
-       document.getElementById('amount').value = '';
-       document.getElementById('txnId').value = '';
-       
-       // ডেটাবেস থেকে নতুন ডেটা পুনরায় লোড করা
-       await loadDataFromSheets();
-    }
+    alert('আবেদন জমা হয়েছে! (দ্রষ্টব্য: no-cors মোডে সাকসেস মেসেজ দেখা যায় না)');
   } catch (error) {
     console.error('Error:', error);
-    alert('কিছু একটা সমস্যা হয়েছে! ইন্টারনেটে সমস্যা থাকতে পারে।');
+    alert('ইন্টারনেট সংযোগ চেক করুন।');
   } finally {
     if (btn) { btn.textContent = originalText; btn.disabled = false; }
   }
 }
-
 // ========== ৩. পেজ লোড হওয়ার সময় এক্সিকিউশন ==========
 window.onload = async () => {
   // কানেকশন চেক করা (এটি আপনার আগের কোডে ডিফাইন করা থাকতে হবে)
