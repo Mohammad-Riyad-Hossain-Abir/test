@@ -1044,24 +1044,27 @@ input[type=file]{color:var(--muted);border:none;background:none;padding:3px 0;}
 // ============================================================
 // 🔥 Google Apps Script Database URL — এখানে আপনার নতুন URL দিন
 // ============================================================
-const GAS_DB_URL = 'https://script.google.com/macros/s/AKfycbyrmQE0ihYOCXoHQst2YvILqLspuT1xkLcL9LvVy0t3DDL-FhWSUVUtHp6bUfUrbfEO3w/exec';
+const GAS_DB_URL = 'https://script.google.com/macros/s/AKfycbwyydet4Rq8m7zANaizpoZijjhv4r8OpbC6mgnFfnQmWcnc_FFoKJp7hYvGQNegaOyD/exec';
 // ============================================================
 
 // GAS সংযোগ পরীক্ষা করে status indicator দেখাও
-let gasAvailable = false;
-async function saveToSheet(memberData) {
-  if (!gasAvailable) return;
-
+async function checkGASConnection() {
   try {
-    const response = await fetch(GAS_DB_URL, {
-      method: 'POST',
-      body: JSON.stringify(memberData)
+    const r = await fetch(GAS_DB_URL + '?action=ping', {
+      method: 'GET',
+      mode: 'cors', // এটি যোগ করুন
+      redirect: 'follow' // এটি নিশ্চিত করুন
     });
-    const result = await response.json();
-    console.log('Saved:', result);
-  } catch (error) {
-    console.error('Error saving to Google Sheets:', error);
+    
+    if (!r.ok) throw new Error('Network response was not ok');
+    
+    const d = await r.json();
+    gasAvailable = d.ok;
+  } catch(e) {
+    console.error("GAS Connection Error:", e);
+    gasAvailable = false;
   }
+  // বাকি কোড...
 }
 
 const SKEY = 'ics_db_v4'; // fallback cache only
