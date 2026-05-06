@@ -281,14 +281,17 @@ input[type=file]{color:var(--muted);border:none;background:none;padding:3px 0;}
   <div>
     <label class="lbl">পদবী *</label>
     <input id="f-last-desig" type="text" placeholder="আগের পদের নাম"/>
+     <div class="emsg hidden" id="e-title"></div>
   </div>
   <div>
     <label class="lbl">সেশন *</label>
     <input id="f-last-session" type="text" placeholder="যেমন: ২০২২-২০২৩"/>
+     <div class="emsg hidden" id="e-session"></div>
   </div>
   <div>
     <label class="lbl">সভাপতির নাম *</label>
     <input id="f-last-pname" type="text" placeholder="আগের সভাপতির নাম"/>
+     <div class="emsg hidden" id="e-president"></div>
   </div>
   <!-- hidden fields to hold dummy values for validation -->
   <input id="f-branch" type="hidden" value="প্রযোজ্য নয়"/>
@@ -1045,7 +1048,7 @@ input[type=file]{color:var(--muted);border:none;background:none;padding:3px 0;}
 // ============================================================
 // 🔥 Google Apps Script Database URL — এখানে আপনার নতুন URL দিন
 // ============================================================
-const GAS_DB_URL = 'https://script.google.com/macros/s/AKfycbxxncu5n6XcWkKpv9TRQ3YLcLssdv5zH4JfXOb_bSiyvFhfdbwKfAKUC4jCw6Mgmv6j/exec';
+const GAS_DB_URL = 'https://script.google.com/macros/s/AKfycby40uOezA8vx6M-9oVTd2N8JSm2k6JV_wNMq6s-HWcDauw99IFqa0hAP3q2dX6jE4eJ/exec';
 // ============================================================
 // GAS সংযোগ পরীক্ষা করে status indicator দেখাও
 // ============================================================
