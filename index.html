@@ -1044,29 +1044,34 @@ input[type=file]{color:var(--muted);border:none;background:none;padding:3px 0;}
 // ============================================================
 // 🔥 Google Apps Script Database URL — এখানে আপনার নতুন URL দিন
 // ============================================================
-const GAS_DB_URL = 'https://script.google.com/macros/s/AKfycbwyydet4Rq8m7zANaizpoZijjhv4r8OpbC6mgnFfnQmWcnc_FFoKJp7hYvGQNegaOyD/exec';
+const GAS_DB_URL = 'https://script.google.com/macros/s/AKfycbyKlmEHk220Etnm9bW7KHgpeckThWTJE0Q8tQU615R-LuLEubf3Fzm1ni8QnT09eRWj/exec';
 // ============================================================
 
 // GAS সংযোগ পরীক্ষা করে status indicator দেখাও
-async function checkGASConnection() {
+async function submitData() {
+  const payload = {
+    amount: document.getElementById('amount').value,
+    transactionId: document.getElementById('txnId').value,
+    date: document.getElementById('date').value
+  };
+
   try {
-    const r = await fetch(GAS_DB_URL + '?action=ping', {
-      method: 'GET',
-      mode: 'cors', // এটি যোগ করুন
-      redirect: 'follow' // এটি নিশ্চিত করুন
+    const response = await fetch(GAS_DB_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      redirect: 'follow' // এটি না দিলে "জমা হচ্ছে" তেই আটকে থাকবে
     });
     
-    if (!r.ok) throw new Error('Network response was not ok');
-    
-    const d = await r.json();
-    gasAvailable = d.ok;
-  } catch(e) {
-    console.error("GAS Connection Error:", e);
-    gasAvailable = false;
+    const result = await response.json();
+    if(result.result === 'success') {
+       alert('সফলভাবে জমা হয়েছে!');
+       // বাটন আগের অবস্থায় ফিরিয়ে আনুন
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('কিছু একটা সমস্যা হয়েছে!');
   }
-  // বাকি কোড...
 }
-
 const SKEY = 'ics_db_v4'; // fallback cache only
 const AKEY = 'ics_admins_v2';
 let members = [];
