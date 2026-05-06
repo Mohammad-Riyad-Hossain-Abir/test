@@ -1044,34 +1044,11 @@ input[type=file]{color:var(--muted);border:none;background:none;padding:3px 0;}
 // ============================================================
 // 🔥 Google Apps Script Database URL — এখানে আপনার নতুন URL দিন
 // ============================================================
-const GAS_DB_URL = 'https://script.google.com/macros/s/AKfycbyKlmEHk220Etnm9bW7KHgpeckThWTJE0Q8tQU615R-LuLEubf3Fzm1ni8QnT09eRWj/exec';
+const GAS_DB_URL = 'https://script.google.com/macros/s/AKfycbxxncu5n6XcWkKpv9TRQ3YLcLssdv5zH4JfXOb_bSiyvFhfdbwKfAKUC4jCw6Mgmv6j/exec';
 // ============================================================
-
 // GAS সংযোগ পরীক্ষা করে status indicator দেখাও
-async function submitData() {
-  const payload = {
-    amount: document.getElementById('amount').value,
-    transactionId: document.getElementById('txnId').value,
-    date: document.getElementById('date').value
-  };
-
-  try {
-    const response = await fetch(GAS_DB_URL, {
-      method: 'POST',
-      body: JSON.stringify(payload),
-      redirect: 'follow' // এটি না দিলে "জমা হচ্ছে" তেই আটকে থাকবে
-    });
-    
-    const result = await response.json();
-    if(result.result === 'success') {
-       alert('সফলভাবে জমা হয়েছে!');
-       // বাটন আগের অবস্থায় ফিরিয়ে আনুন
-    }
-  } catch (error) {
-    console.error('Error:', error);
-    alert('কিছু একটা সমস্যা হয়েছে!');
-  }
-}
+  
+// ========== গ্লোবাল ভ্যারিয়েবল (State Management) ==========
 const SKEY = 'ics_db_v4'; // fallback cache only
 const AKEY = 'ics_admins_v2';
 let members = [];
@@ -1081,6 +1058,92 @@ let radios = { anf:'', shg:'', shv:'' };
 let memberTab = 'pend';
 let currentAdminUser = null;
 let deleteUID = null;
+
+// ========== ১. ডেটা লোড করার ফাংশন (অন্য ডিভাইসের তথ্য পাওয়ার জন্য) ==========
+async function loadDataFromSheets() {
+  if (!gasAvailable) {
+    console.warn("Sheets কানেকশন নেই, ক্যাশ থেকে ডেটা দেখাচ্ছে।");
+    loadFromCache();
+    return;
+  }
+
+  try {
+    const response = await fetch(GAS_DB_URL + '?action=getMembers', {
+      method: 'GET',
+      redirect: 'follow'
+    });
+    const result = await response.json();
+
+    if (result.ok) {
+      members = result.data; 
+      // লেটেস্ট ডেটা দিয়ে ক্যাশ আপডেট করা হচ্ছে
+      localStorage.setItem(SKEY, JSON.stringify(members));
+      
+      if (typeof renderMembers === "function") renderMembers(); 
+      console.log("সব ডিভাইসের ডেটা সিঙ্ক হয়েছে।");
+    }
+  } catch (error) {
+    console.error("Sheets থেকে ডেটা আনতে সমস্যা:", error);
+    loadFromCache();
+  }
+}
+
+// ক্যাশ থেকে ডেটা লোড করার ফাংশন
+function loadFromCache() {
+  const cachedData = localStorage.getItem(SKEY);
+  if (cachedData) {
+    members = JSON.parse(cachedData);
+    if (typeof renderMembers === "function") renderMembers();
+  }
+}
+
+// ========== ২. ডেটা সাবমিট করার ফাংশন ==========
+async function submitData() {
+  const btn = document.querySelector('button[onclick="submitData()"]'); 
+  const originalText = btn ? btn.textContent : "জমা দিন";
+  
+  const payload = {
+    amount: document.getElementById('amount').value,
+    transactionId: document.getElementById('txnId').value,
+    date: document.getElementById('date').value
+  };
+
+  if (btn) { btn.textContent = "⏳ জমা হচ্ছে..."; btn.disabled = true; }
+
+  try {
+    const response = await fetch(GAS_DB_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      redirect: 'follow'
+    });
+    
+    const result = await response.json();
+    if(result.result === 'success') {
+       alert('সফলভাবে জমা হয়েছে!');
+       // ইনপুট ফিল্ড ক্লিয়ার করা
+       document.getElementById('amount').value = '';
+       document.getElementById('txnId').value = '';
+       
+       // ডেটাবেস থেকে নতুন ডেটা পুনরায় লোড করা
+       await loadDataFromSheets();
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('কিছু একটা সমস্যা হয়েছে! ইন্টারনেটে সমস্যা থাকতে পারে।');
+  } finally {
+    if (btn) { btn.textContent = originalText; btn.disabled = false; }
+  }
+}
+
+// ========== ৩. পেজ লোড হওয়ার সময় এক্সিকিউশন ==========
+window.onload = async () => {
+  // কানেকশন চেক করা (এটি আপনার আগের কোডে ডিফাইন করা থাকতে হবে)
+  if (typeof checkGASConnection === "function") {
+    await checkGASConnection();
+  }
+  // শিট থেকে সরাসরি ডেটা লোড করা
+  await loadDataFromSheets();
+};
 // gasAvailable উপরে declare করা হয়েছে
 
 // LOGO
