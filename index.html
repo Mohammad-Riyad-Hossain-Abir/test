@@ -1060,7 +1060,8 @@ let currentAdminUser = null;
 let deleteUID = null;
 
 // ========== ১. ডেটা লোড করার ফাংশন (অন্য ডিভাইসের তথ্য পাওয়ার জন্য) ==========
-async function loadDataFromSheets() {
+let gasAvailable = true;
+  async function loadDataFromSheets() {
   if (!gasAvailable) {
     console.warn("Sheets কানেকশন নেই, ক্যাশ থেকে ডেটা দেখাচ্ছে।");
     loadFromCache();
